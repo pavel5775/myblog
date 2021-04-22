@@ -1,0 +1,101 @@
+﻿@*@model IEnumerable<MyBlog.Models.Post>*@
+@model MyBlog.ViewModels.PostsViewModel
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+@if (User.Identity.Name == "admin123@ukr.net")
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Title)*@
+                Title
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Description)*@
+                Description
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.Content)*@
+                Content
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.PublishDate)*@
+                PublishDate
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.PublishTime)*@
+                PublishTime
+            </th>
+            <th>
+                @*@Html.DisplayNameFor(model => model.ImagePath)*@
+                ImagePath
+            </th>
+            <th>Control</th>
+        </tr>
+    </thead>
+    <tbody>
+        @*@foreach (var item in Model)*@
+        @foreach (var item in Model.Posts)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Content)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PublishTime)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ImagePath)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*annex*@
+@if (Model.Paginator.HasPreviousPage)
+{
+    <a asp-action="Index"
+       asp-route-pageNumber="@Model.Paginator.PageNumber-1"
+       class="btn btn-default">
+        <i class="glyficon glyficon-chevron-left"></i>
+        Previous Page
+    </a>
+}
+
+@*annex*@
+@if (Model.Paginator.HasNextPage)
+{
+    <a asp-action="Index"
+       asp-route-pageNumber="@Model.Paginator.PageNumber+1"
+       class="btn btn-default">
+        <i class="glyficon glyficon-chevron-right"></i>
+        Next Page
+    </a>
+}

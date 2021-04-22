@@ -12,7 +12,7 @@ namespace MyBlog.Models
 
         [Required]
         [MaxLength(50)]
-        [Display(Name ="Post Titel")]
+        [Display(Name ="Post Title")]
         public string Title { get; set; }
 
         [Required]
