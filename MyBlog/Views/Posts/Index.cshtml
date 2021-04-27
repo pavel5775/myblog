@@ -1,6 +1,7 @@
 ﻿@*@model IEnumerable<MyBlog.Models.Post>*@
 @model MyBlog.ViewModels.PostsViewModel
-
+@addTagHelper *, MyBlog 
+@*так подключается тагхелпер, указание название приложения после звездочки и запятой необходимо*@
 
 @{
     ViewData["Title"] = "Index";
@@ -15,87 +16,45 @@
     </p>
 }
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @*@Html.DisplayNameFor(model => model.Title)*@
-                Title
-            </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.Description)*@
-                Description
-            </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.Content)*@
-                Content
-            </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.PublishDate)*@
-                PublishDate
-            </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.PublishTime)*@
-                PublishTime
-            </th>
-            <th>
-                @*@Html.DisplayNameFor(model => model.ImagePath)*@
-                ImagePath
-            </th>
-            <th>Control</th>
-        </tr>
-    </thead>
-    <tbody>
-        @*@foreach (var item in Model)*@
-        @foreach (var item in Model.Posts)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Description)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Content)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PublishDate)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PublishTime)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ImagePath)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@*annex for selectlist*@
+<form method="get">
+    <div class="form-inline form-group">
+        <label class="control-label"> Category </label>
+        &nbsp;&nbsp;
+        <select name="categoryId" asp-items="Model.Categories" class="form-control"></select>
+        &nbsp;&nbsp;&nbsp;
+        <input type="submit" value="Select" class="btn btn-primary"/>
+    </div>
+</form>
 
-@*annex*@
-@if (Model.Paginator.HasPreviousPage)
+@foreach (var item in Model.Posts)
 {
-    <a asp-action="Index"
-       asp-route-pageNumber="@Model.Paginator.PageNumber-1"
-       class="btn btn-default">
-        <i class="glyficon glyficon-chevron-left"></i>
-        Previous Page
-    </a>
+    <div class="card card_margin">
+        <div class="card-header">
+            @Html.DisplayFor(modelItem => item.PublishDate)
+            @Html.DisplayFor(modelItem => item.PublishTime)
+        </div>
+        <div class="card-body">
+            <img src="@Html.DisplayFor(modelItem => item.ImagePath)" alt="..." class="post_image" />
+            <h5 class="card-title">@Html.DisplayFor(modelItem => item.Title)</h5>
+            <h6 class="card-title">Категория: @Html.DisplayFor(modelItem => item.Category.Name)</h6>
+            <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
+            <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
+            <a asp-action="Details" asp-route-id="@item.id" class="btn btn-primary">Details</a>
+        </div>
+        <div class="card-footer text-muted">
+            |
+            <a asp-action="Index" asp-controller="Comments" asp-route-id="@item.id">Comments</a>
+            |
+            <a asp-action="Edit" asp-route-id="@item.id">Edit</a>
+            |
+            <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
+            |
+        </div>
+    </div>
+
 }
 
-@*annex*@
-@if (Model.Paginator.HasNextPage)
-{
-    <a asp-action="Index"
-       asp-route-pageNumber="@Model.Paginator.PageNumber+1"
-       class="btn btn-default">
-        <i class="glyficon glyficon-chevron-right"></i>
-        Next Page
-    </a>
-}
+<br/>
+
+<page-link page-model="Model.Paginator" page-action="Index"></page-link>

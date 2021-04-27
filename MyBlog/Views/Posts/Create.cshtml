@@ -46,6 +46,13 @@
                 <input asp-for="ImagePath" type="file" name="uploadFile" accept="image/*" class="form-control" />
                 <span asp-validation-for="ImagePath" class="text-danger"></span>
             </div>
+
+            @*annex for selectlist*@
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label"></label>
+                <select asp-for="CategoryId" asp-items="ViewBag.CategoryId" class="form-control"></select>
+            </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
