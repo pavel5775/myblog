@@ -5,9 +5,12 @@
 }
 
 <h1>Index</h1>
+<h5>Post: @ViewBag.Post.Title</h5>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    @*<a asp-action="Create">Create New</a>*@
+    @*id с маленькой буквы так как я лоханулся в модели и указал свойство с маленькой буквы*@
+    <a asp-action="Create" asp-route-id="@ViewBag.Post.id">Create New</a>
 </p>
 <table class="table">
     <thead>

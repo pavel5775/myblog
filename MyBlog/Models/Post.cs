@@ -8,6 +8,7 @@ namespace MyBlog.Models
 {
     public class Post
     {
+        //лоханулся и свойство написал с маленькой буквы. Обнаружил слишком поздно, поэтому уже ничего не менял.
         public int id { get; set; }
 
         [Required]
