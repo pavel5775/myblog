@@ -12,7 +12,7 @@ namespace MyBlog.Models
 
         [Required]
         [MaxLength(50)]
-        [Display(Name ="Post Titel")]
+        [Display(Name ="Post Title")]
         public string Title { get; set; }
 
         [Required]
@@ -38,6 +38,9 @@ namespace MyBlog.Models
         [MaxLength(100)]
         [Display(Name = "Post Image")]
         public string ImagePath { get; set; }
+
+        public int CategoryId { get; set; }
+        public virtual Category Category { get; set; }
 
         public virtual List<Comment> Comments { get; set; }
     }

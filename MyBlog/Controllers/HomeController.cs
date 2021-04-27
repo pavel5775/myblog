@@ -23,6 +23,17 @@ namespace MyBlog.Controllers
             return View();
         }
 
+        //annex
+        public IActionResult About ()
+        {
+            return View();
+        }
+        //annex
+        public IActionResult Contact()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

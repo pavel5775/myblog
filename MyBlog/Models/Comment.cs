@@ -27,6 +27,8 @@ namespace MyBlog.Models
         public string PublishTime { get; set; }
 
         public int ApplicationUserId { get; set; }
-        public virtual IdentityUser ApplicationUser { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
+        public int PostId { get; set; }
+        public virtual Post Post { get; set; }
     }
 }
