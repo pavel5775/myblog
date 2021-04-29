@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -27,7 +28,7 @@ namespace MyBlog.Controllers
             //annex
             if (id !=null)
             {
-                var post = await _context.Posts.Where(p => p.id == id)
+                var post = await _context.Posts.Where(p => p.Id == id)
                     .FirstOrDefaultAsync();
                 ViewBag.Post = post;
 
@@ -54,7 +55,7 @@ namespace MyBlog.Controllers
 
             var comment = await _context.Comments
                 .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -64,10 +65,11 @@ namespace MyBlog.Controllers
         }
 
         // GET: Comments/Create
-        public IActionResult Create(/*annex*/int? id)
+        [Authorize]
+        public IActionResult Create(/*annex*/int? postId)
         {
             //annex
-            var post = _context.Posts.Where(p => p.id == id).FirstOrDefault();
+            var post = _context.Posts.Where(p => p.Id == postId).FirstOrDefault();
             ViewBag.Post = post;
 
             return View();
@@ -77,17 +79,16 @@ namespace MyBlog.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Create([Bind("id,Content,PublishDate,PublishTime,ApplicationUserId,PostId")] Comment comment)
-        public async Task<IActionResult> Create([Bind("id,Content,PublishDate,PublishTime,PostId")] Comment comment)
+        [ValidateAntiForgeryToken]        
+        public async Task<IActionResult> Create([Bind("Id,Content,PublishDate,PublishTime,ApplicationUserId,ApplicationUserName,PostId")] Comment comment)
         {
             if (ModelState.IsValid)
-            {               
-                int userId = Convert.ToInt32(User.FindFirstValue(ClaimTypes.NameIdentifier));
-                comment.ApplicationUserId = 1;
+            {
+                var user = await _context.Users.Where(u => u.UserName == User.Identity.Name).FirstOrDefaultAsync();
+                comment.ApplicationUserId = user.Id;
                 _context.Add(comment);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(Index), new { id=comment.PostId});
             }
             return View(comment);
 
@@ -98,11 +99,12 @@ namespace MyBlog.Controllers
             //    await _context.SaveChangesAsync();
             //    return RedirectToAction(nameof(Index));
             //}
-            //ViewData["PostId"] = new SelectList(_context.Posts, "id", "Content", comment.PostId);
+            //ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Content", comment.PostId);
             //return View(comment);
         }
 
         // GET: Comments/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -110,13 +112,26 @@ namespace MyBlog.Controllers
                 return NotFound();
             }
 
-            var comment = await _context.Comments.FindAsync(id);
+            var comment = await _context.Comments.FindAsync(id);          
+
             if (comment == null)
             {
                 return NotFound();
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "id", "Content", comment.PostId);
-            return View(comment);
+
+            //annex Вариант ограничения доступа внутри кода контроллера c редирект на страницу отказа
+            if (comment.ApplicationUserName == User.Identity.Name)
+            {
+                //ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Content", comment.PostId);
+                return View(comment);
+            }
+
+            return Redirect("Identity/Account/AccessDenied");
+
+            //в оригинале заканчиваллось просто так, там где аннекс начинается.
+            //ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Content", comment.PostId);
+            //return View(comment);
+
         }
 
         // POST: Comments/Edit/5
@@ -124,9 +139,9 @@ namespace MyBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,Content,PublishDate,PublishTime,ApplicationUserId,PostId")] Comment comment)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Content,PublishDate,PublishTime,ApplicationUserId,PostId")] Comment comment)
         {
-            if (id != comment.id)
+            if (id != comment.Id)
             {
                 return NotFound();
             }
@@ -140,7 +155,7 @@ namespace MyBlog.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommentExists(comment.id))
+                    if (!CommentExists(comment.Id))
                     {
                         return NotFound();
                     }
@@ -151,7 +166,7 @@ namespace MyBlog.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PostId"] = new SelectList(_context.Posts, "id", "Content", comment.PostId);
+            ViewData["PostId"] = new SelectList(_context.Posts, "Id", "Content", comment.PostId);
             return View(comment);
         }
 
@@ -165,7 +180,7 @@ namespace MyBlog.Controllers
 
             var comment = await _context.Comments
                 .Include(c => c.Post)
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (comment == null)
             {
                 return NotFound();
@@ -182,12 +197,12 @@ namespace MyBlog.Controllers
             var comment = await _context.Comments.FindAsync(id);
             _context.Comments.Remove(comment);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), /*annex*/new { id = comment.PostId } );
         }
 
         private bool CommentExists(int id)
         {
-            return _context.Comments.Any(e => e.id == id);
+            return _context.Comments.Any(e => e.Id == id);
         }
     }
 }

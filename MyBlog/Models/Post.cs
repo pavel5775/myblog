@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
-using System.ComponentModel.DataAnnotations;
 
 namespace MyBlog.Models
 {
     public class Post
     {
-        //лоханулся и свойство написал с маленькой буквы. Обнаружил слишком поздно, поэтому уже ничего не менял.
-        public int id { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(50)]
-        [Display(Name ="Post Title")]
+        [Display(Name = "Post Title")]
         public string Title { get; set; }
 
         [Required]
@@ -29,12 +28,12 @@ namespace MyBlog.Models
         [Required]
         [DataType(DataType.Date)]
         [Display(Name = "Publish Date")]
-        public string PublishDate { get; set; }
+        public DateTime PublishDate { get; set; }
 
         [Required]
         [DataType(DataType.Time)]
         [Display(Name = "Publish Time")]
-        public string PublishTime { get; set; }
+        public DateTime PublishTime { get; set; }
 
         [MaxLength(100)]
         [Display(Name = "Post Image")]

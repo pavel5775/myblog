@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>aspnet-MyBlog-0439CEFF-0F4C-4C7E-BF83-FDCD40A4D7FC</UserSecretsId>
+    <UserSecretsId>aspnet-MyBlog-FA8CEEF6-E7F1-471C-A839-830B7887124F</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
