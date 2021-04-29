@@ -1,6 +1,6 @@
 ﻿@*@model IEnumerable<MyBlog.Models.Post>*@
 @model MyBlog.ViewModels.PostsViewModel
-@addTagHelper *, MyBlog 
+@addTagHelper *, MyBlog
 @*так подключается тагхелпер, указание название приложения после звездочки и запятой необходимо*@
 
 @{
@@ -9,7 +9,16 @@
 
 <h1>Index</h1>
 
-@if (User.Identity.Name == "admin123@ukr.net")
+@*annex. Simple autorization*@
+@*@if (User.Identity.Name == "admin123@ukr.net")
+    {
+        <p>
+            <a asp-action="Create">Create New</a>
+        </p>
+    }*@
+
+@*annex. Role autorization*@
+@if (User.IsInRole("SuperAdmin"))
 {
     <p>
         <a asp-action="Create">Create New</a>
@@ -23,7 +32,7 @@
         &nbsp;&nbsp;
         <select name="categoryId" asp-items="Model.Categories" class="form-control"></select>
         &nbsp;&nbsp;&nbsp;
-        <input type="submit" value="Select" class="btn btn-primary"/>
+        <input type="submit" value="Select" class="btn btn-primary" />
     </div>
 </form>
 
@@ -40,21 +49,25 @@
             <h6 class="card-title">Категория: @Html.DisplayFor(modelItem => item.Category.Name)</h6>
             <p class="card-text">@Html.DisplayFor(modelItem => item.Description)</p>
             <p class="card-text">@Html.DisplayFor(modelItem => item.Content)</p>
-            <a asp-action="Details" asp-route-id="@item.id" class="btn btn-primary">Details</a>
+            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-primary">Details</a>
         </div>
         <div class="card-footer text-muted">
             |
-            <a asp-action="Index" asp-controller="Comments" asp-route-id="@item.id">Comments</a>
+            @*annex for comment*@
+            <a asp-action="Index" asp-controller="Comments" asp-route-id="@item.Id">Comments</a>
             |
-            <a asp-action="Edit" asp-route-id="@item.id">Edit</a>
-            |
-            <a asp-action="Delete" asp-route-id="@item.id">Delete</a>
-            |
+            @if (User.IsInRole("SuperAdmin"))
+            {
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                <span>|</span>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <span>|</span>
+            }
         </div>
     </div>
 
 }
 
-<br/>
+<br />
 
 <page-link page-model="Model.Paginator" page-action="Index"></page-link>

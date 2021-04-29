@@ -17,6 +17,5 @@ namespace MyBlog.Data
         public DbSet<Comment> Comments { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
         public DbSet<Category> Categories { get; set; }
-
     }
 }

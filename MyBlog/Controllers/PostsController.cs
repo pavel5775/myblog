@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -80,7 +81,7 @@ namespace MyBlog.Controllers
             }
 
             var post = await _context.Posts
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
@@ -90,6 +91,8 @@ namespace MyBlog.Controllers
         }
 
         // GET: Posts/Create
+        // annex. Authorize - предотвращает несанкционированный доступ.
+        [Authorize(Roles ="SuperAdmin")]
         public IActionResult Create()
         {
             //annex for selectlist
@@ -108,7 +111,7 @@ namespace MyBlog.Controllers
         //public async Task<IActionResult> Create([Bind("id,Title,Description,Content,PublishDate,PublishTime,ImagePath, CategoryId")] Post post,
         //    /*annex*/ IFormFile uploadFile)
         
-        public async Task<IActionResult> Create([Bind("id,Title,Description,Content,PublishDate,PublishTime,ImagePath, CategoryId")] Post post,
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,Content,PublishDate,PublishTime,ImagePath, CategoryId")] Post post,
             /*annex*/ IFormFile uploadFile)
         {
             if (ModelState.IsValid)
@@ -160,6 +163,7 @@ namespace MyBlog.Controllers
         }
 
         // GET: Posts/Edit/5
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -180,9 +184,9 @@ namespace MyBlog.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("id,Title,Description,Content,PublishDate,PublishTime,ImagePath")] Post post)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Content,PublishDate,PublishTime,ImagePath")] Post post)
         {
-            if (id != post.id)
+            if (id != post.Id)
             {
                 return NotFound();
             }
@@ -196,7 +200,7 @@ namespace MyBlog.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!PostExists(post.id))
+                    if (!PostExists(post.Id))
                     {
                         return NotFound();
                     }
@@ -211,6 +215,7 @@ namespace MyBlog.Controllers
         }
 
         // GET: Posts/Delete/5
+        [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -219,7 +224,7 @@ namespace MyBlog.Controllers
             }
 
             var post = await _context.Posts
-                .FirstOrDefaultAsync(m => m.id == id);
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (post == null)
             {
                 return NotFound();
@@ -241,7 +246,7 @@ namespace MyBlog.Controllers
 
         private bool PostExists(int id)
         {
-            return _context.Posts.Any(e => e.id == id);
+            return _context.Posts.Any(e => e.Id == id);
         }
     }
 }
